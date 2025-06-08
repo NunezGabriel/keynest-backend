@@ -41,6 +41,12 @@ class AuthController extends Controller
         ]);
     }
 
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum')->except(['login', 'register']);
+    }
+
+
     public function login(Request $request)
     {
         $request->validate([
