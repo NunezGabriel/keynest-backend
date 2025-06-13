@@ -17,7 +17,7 @@ class AuthController extends Controller
             'name' => 'required|string|max:100',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6',
-            'user_type' => 'required|in:landlord,seeker'
+            'user_type' => 'required|in:landlord,seeker,admin'
         ]);
 
         if ($validator->fails()) {

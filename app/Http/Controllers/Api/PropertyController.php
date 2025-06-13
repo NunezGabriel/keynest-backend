@@ -7,14 +7,32 @@ use Illuminate\Http\Request;
 use App\Models\Property;
 use Illuminate\Support\Facades\Auth;
 
-
 class PropertyController extends Controller
 {
-    // Store una propiedad y asociar user_id desde token
+    // Listar propiedades (admin ve todas, landlord solo las suyas)
+    public function index()
+    {
+        $properties = Property::with('user', 'images')->get();
+        return response()->json($properties);
+    }
 
+
+    // Ver una propiedad específica
+    public function show($id)
+    {
+        $property = Property::with('user', 'images')->find($id);
+
+        if (!$property) {
+            return response()->json(['error' => 'Propiedad no encontrada'], 404);
+        }
+
+        return response()->json($property);
+    }
+
+
+    // Crear una propiedad
     public function store(Request $request)
     {
-        // Validar si el usuario es landlord
         if (auth()->user()->user_type !== 'landlord') {
             return response()->json(['error' => 'Solo los landlords pueden crear propiedades'], 403);
         }
@@ -39,5 +57,58 @@ class PropertyController extends Controller
         $property = Property::create($validated);
 
         return response()->json($property, 201);
+    }
+
+    // Actualizar una propiedad
+    public function update(Request $request, $id)
+    {
+        $property = Property::findOrFail($id);
+        $user = auth()->user();
+
+        // Solo el landlord dueño o admin puede editar
+        if (
+            $user->user_type !== 'admin' &&
+            !($user->user_type === 'landlord' && $property->user_id === $user->id)
+        ) {
+            return response()->json(['error' => 'No autorizado para editar esta propiedad'], 403);
+        }
+
+        $validated = $request->validate([
+            'title' => 'sometimes|required|string|max:150',
+            'description' => 'sometimes|required|string',
+            'property_type' => 'sometimes|required|in:casa,departamento',
+            'price' => 'sometimes|required|numeric',
+            'maintenance_cost' => 'nullable|numeric',
+            'is_rent' => 'sometimes|required|boolean',
+            'square_meters' => 'sometimes|required|integer',
+            'bedrooms' => 'sometimes|required|integer',
+            'bathrooms' => 'sometimes|required|integer',
+            'pets_allowed' => 'boolean',
+            'location' => 'sometimes|required|string|max:255',
+            'status' => 'in:disponible,vendido,alquilado,inactivo',
+        ]);
+
+        $property->update($validated);
+
+        return response()->json($property);
+    }
+
+    // Eliminar propiedad
+    public function destroy($id)
+    {
+        $property = Property::findOrFail($id);
+        $user = auth()->user();
+
+        // Admin puede borrar todo, landlord solo sus propias propiedades
+        if (
+            $user->user_type !== 'admin' &&
+            !($user->user_type === 'landlord' && $property->user_id === $user->id)
+        ) {
+            return response()->json(['error' => 'No autorizado para eliminar esta propiedad'], 403);
+        }
+
+        $property->delete();
+
+        return response()->json(['message' => 'Propiedad eliminada correctamente']);
     }
 }
