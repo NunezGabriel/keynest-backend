@@ -19,6 +19,9 @@ use Illuminate\Support\Facades\Route;
 // });
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\PropertyController;
+use App\Http\Controllers\Api\FavoriteController;
+use App\Http\Controllers\Api\PropertyImageController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -26,16 +29,11 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
-});
 
+    Route::get('/properties/mine', [PropertyController::class, 'myProperties']); // 👈 NUEVA RUTA
 
-use App\Http\Controllers\Api\PropertyController;
-use App\Http\Controllers\Api\FavoriteController;
-use App\Http\Controllers\Api\PropertyImageController;
-
-Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('properties', PropertyController::class);
     Route::post('/favorites', [FavoriteController::class, 'store']);
     Route::delete('/favorites/{id}', [FavoriteController::class, 'destroy']);
-    Route::post('/properties/{property}/images', [PropertyImageController::class, 'store']); // para múltiples imágenes
+    Route::post('/properties/{property}/images', [PropertyImageController::class, 'store']);
 });

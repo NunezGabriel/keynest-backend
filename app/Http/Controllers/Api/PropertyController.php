@@ -49,7 +49,7 @@ class PropertyController extends Controller
             'bathrooms' => 'required|integer',
             'pets_allowed' => 'boolean',
             'location' => 'required|string|max:255',
-            'status' => 'in:disponible,vendido,alquilado,inactivo',
+            'status' => 'in:disponible,cerrada',
         ]);
 
         $validated['user_id'] = auth()->id();
@@ -58,6 +58,23 @@ class PropertyController extends Controller
 
         return response()->json($property, 201);
     }
+
+    // Mostrar solo las propiedades creadas por el usuario autenticado (landlord)
+    public function myProperties()
+    {
+        $user = auth()->user();
+
+        if ($user->user_type !== 'landlord') {
+            return response()->json(['error' => 'Solo los landlords pueden acceder a sus propiedades'], 403);
+        }
+
+        $properties = Property::with('images') // puedes incluir 'user' si lo necesitas
+            ->where('user_id', $user->id)
+            ->get();
+
+        return response()->json($properties);
+    }
+
 
     // Actualizar una propiedad
     public function update(Request $request, $id)
