@@ -31,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/properties/{id}', [PropertyController::class, 'destroy']);
 
     // Otras rutas protegidas
+    Route::get('/favorites', [FavoriteController::class, 'index']); // Nuevo endpoint
     Route::post('/favorites', [FavoriteController::class, 'store']);
     Route::delete('/favorites/{id}', [FavoriteController::class, 'destroy']);
     Route::post('/properties/{property}/images', [PropertyImageController::class, 'store']);
