@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\PropertyImageController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/properties', [PropertyController::class, 'index']); // 👈 Nueva ruta pública
+Route::get('/properties/{id}', [PropertyController::class, 'show']);
 
 // Rutas protegidas (requieren autenticación)
 Route::middleware('auth:sanctum')->group(function () {
@@ -25,8 +26,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Rutas de propiedades protegidas
     Route::get('/properties/mine', [PropertyController::class, 'myProperties']);
-    Route::post('/properties', [PropertyController::class, 'store']);
-    Route::get('/properties/{id}', [PropertyController::class, 'show']); // Opcional: puedes hacerla pública también
+    Route::post('/properties', [PropertyController::class, 'store']); // Opcional: puedes hacerla pública también
     Route::put('/properties/{id}', [PropertyController::class, 'update']);
     Route::delete('/properties/{id}', [PropertyController::class, 'destroy']);
 
