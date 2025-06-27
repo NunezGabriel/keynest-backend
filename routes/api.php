@@ -17,6 +17,7 @@ Route::get('/properties', [PropertyController::class, 'index']);
 Route::get('/properties/details/{id}', [PropertyController::class, 'show']); // 👈 Cambiado el path
 
 // Rutas protegidas
+// Rutas protegidas
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -27,12 +28,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/properties/{id}', [PropertyController::class, 'update']);
     Route::delete('/properties/{id}', [PropertyController::class, 'destroy']);
 
-    // Otras rutas protegidas
+    // 🆕 Agrega esta justo ANTES que la ruta GET '/favorites'
+    Route::get('/favorites/all', [FavoriteController::class, 'all']);
+
+    // Rutas actuales de favoritos (se mantienen)
     Route::get('/favorites', [FavoriteController::class, 'index']);
     Route::post('/favorites', [FavoriteController::class, 'store']);
     Route::delete('/favorites/{id}', [FavoriteController::class, 'destroy']);
+
     Route::post('/properties/{property}/images', [PropertyImageController::class, 'store']);
 });
+
 
 
 // use Illuminate\Http\Request;

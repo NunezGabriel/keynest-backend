@@ -18,7 +18,7 @@ class FavoriteController extends Controller
                 return response()->json(['error' => 'Solo los usuarios seeker pueden gestionar favoritos'], 403);
             }
             return $next($request);
-        });
+        })->only(['store', 'destroy', 'index']); // Solo para estos métodos
     }
 
     // Dar like a una propiedad
@@ -64,5 +64,19 @@ class FavoriteController extends Controller
             ->get();
 
         return response()->json($properties);
+    }
+
+    public function all()
+    {
+        $user = auth()->user();
+
+        if ($user->user_type !== 'admin') {
+            return response()->json(['error' => 'Solo los administradores pueden ver todos los favoritos'], 403);
+        }
+
+        $favorites = Favorite::with(['user:id,name', 'property:property_id,title,user_id'])
+            ->get();
+
+        return response()->json($favorites);
     }
 }
