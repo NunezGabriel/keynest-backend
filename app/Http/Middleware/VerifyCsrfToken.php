@@ -15,5 +15,6 @@ class VerifyCsrfToken extends Middleware
         'api/login',
         'api/register',
         'api/properties',
+        'api/properties/*', // esto cubre DELETE y PUT
     ];
 }
