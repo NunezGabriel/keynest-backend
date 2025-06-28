@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\PropertyController;
 use App\Http\Controllers\Api\FavoriteController;
 use App\Http\Controllers\Api\PropertyImageController;
+use App\Http\Controllers\Api\UserController;
 
 // Rutas públicas
 Route::post('/register', [AuthController::class, 'register']);
@@ -37,6 +38,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/favorites/{id}', [FavoriteController::class, 'destroy']);
 
     Route::post('/properties/{property}/images', [PropertyImageController::class, 'store']);
+
+    Route::get('/users', [UserController::class, 'index']);
+    Route::get('/users/{id}', [UserController::class, 'show']);
+    Route::post('/users', [UserController::class, 'store']);
+    Route::put('/users/{id}', [UserController::class, 'update']);
+    Route::delete('/users/{id}', [UserController::class, 'destroy']);
 });
 
 
