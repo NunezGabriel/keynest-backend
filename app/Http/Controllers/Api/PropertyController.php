@@ -102,7 +102,7 @@ class PropertyController extends Controller
             'bathrooms' => 'sometimes|required|integer',
             'pets_allowed' => 'boolean',
             'location' => 'sometimes|required|string|max:255',
-            'status' => 'in:disponible,vendido,alquilado,inactivo',
+            'status' => 'in:disponible,cerrada',
         ]);
 
         $property->update($validated);
@@ -127,5 +127,31 @@ class PropertyController extends Controller
         $property->delete();
 
         return response()->json(['message' => 'Propiedad eliminada correctamente']);
+    }
+
+    // Cambiar estado a "cerrada"
+    public function closeProperty($id)
+    {
+        $property = Property::findOrFail($id);
+
+        if (auth()->id() !== $property->user_id) {
+            return response()->json(['error' => 'No autorizado'], 403);
+        }
+
+        $property->update(['status' => 'cerrada']);
+        return response()->json($property);
+    }
+
+    // Restablecer a "disponible"
+    public function reopenProperty($id)
+    {
+        $property = Property::findOrFail($id);
+
+        if (auth()->id() !== $property->user_id) {
+            return response()->json(['error' => 'No autorizado'], 403);
+        }
+
+        $property->update(['status' => 'disponible']);
+        return response()->json($property);
     }
 }

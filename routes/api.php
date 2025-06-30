@@ -28,6 +28,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/properties', [PropertyController::class, 'store']);
     Route::put('/properties/{id}', [PropertyController::class, 'update']);
     Route::delete('/properties/{id}', [PropertyController::class, 'destroy']);
+    Route::patch('/properties/{id}/close', [PropertyController::class, 'closeProperty']);
+    Route::patch('/properties/{id}/reopen', [PropertyController::class, 'reopenProperty']);
 
     // 🆕 Agrega esta justo ANTES que la ruta GET '/favorites'
     Route::get('/favorites/all', [FavoriteController::class, 'all']);
