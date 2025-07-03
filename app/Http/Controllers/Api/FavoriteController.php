@@ -57,14 +57,20 @@ class FavoriteController extends Controller
     // Obtener favoritos del usuario
     public function index()
     {
-        $properties = Property::with(['images', 'user'])
-            ->whereHas('favorites', function ($query) {
-                $query->where('user_id', auth()->id());
-            })
+        $favorites = Favorite::where('user_id', auth()->id())
+            ->with(['property.images', 'property.user'])
             ->get();
 
-        return response()->json($properties);
+        $response = $favorites->map(function ($favorite) {
+            $property = $favorite->property->toArray();
+            $property['favorite_id'] = $favorite->id; // Añade el ID del favorito
+            return $property;
+        });
+
+        return response()->json($response);
     }
+
+
 
     public function all()
     {
