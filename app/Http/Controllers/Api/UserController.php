@@ -63,14 +63,28 @@ class UserController extends Controller
 
     public function update(Request $request, $id)
     {
-        $this->ensureAdmin($request);
+        $authUser = $request->user();
+
+        // Solo admins pueden editar a cualquier usuario
+        // Landlord/Seeker solo pueden editar su propia cuenta
+        if ($authUser->user_type !== 'admin' && $authUser->id !== $id) {
+            return response()->json(['error' => 'No tienes permisos para editar esta cuenta.'], 403);
+        }
 
         $user = User::findOrFail($id);
 
-        $user->update($request->only(['name', 'email', 'user_type']));
+        $data = $request->only(['name', 'email']);
+
+        // Solo el admin puede modificar el rol
+        if ($authUser->user_type === 'admin' && $request->has('user_type')) {
+            $data['user_type'] = $request->user_type;
+        }
+
+        $user->update($data);
 
         return response()->json($user);
     }
+
 
     public function destroy(Request $request, $id)
     {
