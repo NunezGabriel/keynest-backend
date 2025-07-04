@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\PropertyController;
 use App\Http\Controllers\Api\FavoriteController;
 use App\Http\Controllers\Api\PropertyImageController;
+use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\UserController;
 
 // Rutas públicas
@@ -46,6 +47,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/users', [UserController::class, 'store']);
     Route::put('/users/{id}', [UserController::class, 'update']);
     Route::delete('/users/{id}', [UserController::class, 'destroy']);
+
+    // Mensajes
+    Route::post('/messages', [MessageController::class, 'store']);
+    Route::get('/messages/{property}', [MessageController::class, 'index']);
+    Route::delete('/messages/{message}', [MessageController::class, 'destroy']);
 });
 
 
